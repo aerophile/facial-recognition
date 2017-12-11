@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Face Recog </title>
+    </head>
+    <body>
+       
+
+
+        <form action="/" method="POST" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            <div class="input text">
+                {{ form.name.label }} {{ form.name }}
+            </div>
+            <div class="input image">
+                {{ form.url.label }} {{ form.url }}
+                
+            </div>
+ 
+            <div class="input submit">
+                <input type="submit" value="Submit" />
+            </div>
+        </form>
+ <div class= "response">
+ {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                
+                    {% for message in messages %}
+                        <p>{{ message[1] }}</p>
+                    {% endfor %}
+                
+            {% endif %}
+        {% endwith %}
+</div>
+    </body>
+</html>
