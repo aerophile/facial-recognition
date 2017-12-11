@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, request
+from flask import Flask, render_template, flash, request,redirect,url_for
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from flask_wtf.file import FileField, FileRequired,FileAllowed
 from werkzeug.utils import secure_filename
@@ -7,7 +7,7 @@ import cv2
 import face_recognition
 import urllib
 import time
-
+import pprint
 
 #DEBUG = True
 app = Flask(__name__)
@@ -17,9 +17,7 @@ app.config['SECRET_KEY'] = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 class FaceRecogForm(FlaskForm):
     name = TextField(' Name :', validators=[validators.required()])
     url = TextField('Image url:', validators=[validators.required()])
-    #photo = FileField('Upload Image',validators=[FileRequired(),FileAllowed(['JPG','jpeg' ,'png'], 'Only Images can be uploaded to Precogniser!')]) #['jpg', 'png']
- 
- 
+
 @app.route("/", methods=['GET', 'POST'])
 def hello():
     form = FaceRecogForm(request.form)
@@ -31,37 +29,36 @@ def hello():
         
  
         if form.validate():
-
             #flash('Hello ' + name)
             name = download_image(url)
             draw_face_boundary(name)
-            flash(process_image(name))
+            message_response = process_image(name)
+            #flash(message_response)
+            return show_result(name,message_response)
+
+    	    #result(name,message_response)
+            #render_template('results.html', img_name=name,message_response=message_response)
             
         else:
             flash('All the form fields are required. ')
         
 
-        '''
-        if form.validate_on_submit():
-
-            f = form.photo.data
-            print "ppinstance path",app.instance_path
-
-            
-            filename = secure_filename(f.filtime.time()ename)
-            f.save(os.path.join(app.instance_path, 'photos', filename))
-           
-        else:
-            flash(form.errors)
-        '''
     return render_template('hello.html', form=form)
 
+@app.route("/results/")
+def result(name,message_response):
+    return render_template('results.html', img_name=name,message_response=message_response)
+
+def show_result(name,message_response):
+    
+    htmlstr = "<html><body><h1>Result</h1><p>"+str(message_response)+"</p><img src='"+url_for('static', filename=name)+"' /> </body></html>"
+    return htmlstr
 
 def download_image(url):
     extension =  url[-4:]
     img_name = None
     if extension == '.jpg' or extension == '.png' or extension == 'jpeg':
-       img_name =  str(time.time())+"_input_image"+extension
+       img_name =  str(int(time.time()))+"_input_image"+extension
        
        urllib.urlretrieve(url, img_name)
     else:
@@ -72,12 +69,14 @@ def draw_face_boundary(name):
     has_face = False
     img = cv2.imread(name,0)
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    
     faces = face_cascade.detectMultiScale(img,1.1,5)
     if (len(faces)>0):
-        has_face = True
         for (x,y,w,h) in faces:
             img = cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
             cv2.imwrite(name, img)
+            cv2.imwrite("static/"+name,img)
+            has_face = True
     return has_face
 
 def is_kejriwal(name):
