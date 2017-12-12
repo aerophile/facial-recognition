@@ -67,14 +67,23 @@ def draw_face_boundary(name):
     img = cv2.imread(name,0)
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     
-    faces = face_cascade.detectMultiScale(img,1.1,5)
+    faces = face_cascade.detectMultiScale(img,1.3,5)
     if (len(faces)>0):
         for (x,y,w,h) in faces:
             img = cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
             cv2.imwrite(name, img)
+
+            #resize_and_save(name,img,150,50)
+
             cv2.imwrite("static/"+name,img)
             has_face = True
     return has_face
+
+def resize_and_save(name,cv2_img,width,height):
+    '''takes in cv2 image object, resizes and saves it'''
+    img = cv2.resize(cv2_img,(width,height))
+    cv2.imwrite("static/resized_"+name,img)
+        
 
 def is_kejriwal(name):
     
