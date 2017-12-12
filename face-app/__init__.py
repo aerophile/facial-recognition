@@ -79,10 +79,10 @@ def draw_face_boundary(name):
             has_face = True
     return has_face
 
-def resize_and_save(name,cv2_img,width,height):
+def resize_and_save(name,cv2_img,width,height,location="static/"):
     '''takes in cv2 image object, resizes and saves it'''
     img = cv2.resize(cv2_img,(width,height))
-    cv2.imwrite("static/resized_"+name,img)
+    cv2.imwrite(location+"resized_"+name,img)
         
 
 def is_kejriwal(name):
