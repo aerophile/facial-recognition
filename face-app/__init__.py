@@ -1,5 +1,5 @@
 from flask import Flask, render_template, flash, request,redirect,url_for
-from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
+from wtforms import Form, TextField, TextAreaField,SelectField, validators, StringField, SubmitField
 from flask_wtf.file import FileField, FileRequired,FileAllowed
 from werkzeug.utils import secure_filename
 from flask_wtf import FlaskForm
@@ -15,7 +15,8 @@ app.config.from_object(__name__)
 app.config['SECRET_KEY'] = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
  
 class FaceRecogForm(FlaskForm):
-    name = TextField(' Name :', validators=[validators.required()])
+    #name = TextField(' Name :', validators=[validators.required()])
+    name = SelectField("Technique", [validators.required()], choices=[("technique 1","Technique 1"),("technique 2","Technique 2")])
     url = TextField('Image url:', validators=[validators.required()])
 
 @app.route("/", methods=['GET', 'POST'])
@@ -24,20 +25,21 @@ def hello():
  
     print form.errors
     if request.method == 'POST':
-        name=request.form['name']
-	url=request.form['url']
+        technique = request.form['name']
+	url = request.form['url']
         
  
         if form.validate():
             #flash('Hello ' + name)
+            print 'Hello ' + technique
             name = download_image(url)
             draw_face_boundary(name)
             message_response = process_image(name)
             #flash(message_response)
-            return show_result(name,message_response)
+            #return show_result(name,message_response) works
 
     	    #result(name,message_response)
-            #render_template('results.html', img_name=name,message_response=message_response)
+            return render_template('results.html', img_name=name,message_response=message_response)
             
         else:
             flash('All the form fields are required. ')
@@ -48,11 +50,6 @@ def hello():
 @app.route("/results/")
 def result(name,message_response):
     return render_template('results.html', img_name=name,message_response=message_response)
-
-def show_result(name,message_response):
-    
-    htmlstr = "<html><body><h1>Result</h1><p>"+str(message_response)+"</p><img src='"+url_for('static', filename=name)+"' /> </body></html>"
-    return htmlstr
 
 def download_image(url):
     extension =  url[-4:]
