@@ -1,38 +1,64 @@
+
+
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Face Recog </title>
-    </head>
-    <body>
-       
-
-
-        <form action="/" method="POST" enctype="multipart/form-data">
+   <head>
+      <title>Face Recog </title>
+      <style>
+         body, html {
+         height: 100%;
+         }
+         .bg {
+         background-image: url("../static/background.png");
+         height: 100%;
+         background-position: center;
+         background-repeat: no-repeat;
+         background-size: cover;
+         }
+         .form {
+         background-color: #ffffff;
+         padding : 10%;
+         margin: 15%;
+         margin-bottom: 1%;
+         }
+         .submit-btn{
+         background-color: #4bdd72;
+         padding-top : 1%;
+         padding-bottom : 1%;
+         padding-left : 3%;
+         padding-right : 3%;
+         margin-left:40%;
+         margin-top:10%;
+         }
+      </style>
+   </head>
+   <body class="bg" >
+      <div class="form">
+         <form action="/" method="POST" enctype="multipart/form-data" >
             {{ form.csrf_token }}
             <div class="input text">
-                {{ form.name.label }} {{ form.name }}
+               {{ form.name.label }}* {{ form.name }}
             </div>
+            <br>
             <div class="input image">
-                {{ form.url.label }} {{ form.url }}
-                
+               {{ form.url.label }}* {{ form.url }}
             </div>
- 
+            <br>
             <div class="input submit">
-                <input type="submit" value="Submit" />
+               <input type="submit" class="submit-btn" value="Submit" />
             </div>
-        </form>
- <div class= "response">
- {% with messages = get_flashed_messages(with_categories=true) %}
+         </form>
+         <div class= "response">
+            {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                
-                    {% for message in messages %}
-                 
-                        <p>{{ message[1] }}</p>
-                                          
-                    {% endfor %}
-                
+            {% for message in messages %}
+            <p>{{ message[1] }}</p>
+            {% endfor %}
             {% endif %}
-        {% endwith %}
-</div>
-    </body>
+            {% endwith %}
+         </div>
+      </div>
+   </body>
 </html>
+
+

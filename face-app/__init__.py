@@ -16,7 +16,7 @@ app.config['SECRET_KEY'] = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
  
 class FaceRecogForm(FlaskForm):
     #name = TextField(' Name :', validators=[validators.required()])
-    name = SelectField("Technique", [validators.required()], choices=[("technique 1","Technique 1"),("technique 2","Technique 2")])
+    name = SelectField("Technique", [validators.required()], choices=[("technique1","Technique 1"),("technique2","Technique 2")])
     url = TextField('Image url:', validators=[validators.required()])
 
 @app.route("/", methods=['GET', 'POST'])
@@ -26,20 +26,23 @@ def hello():
     print form.errors
     if request.method == 'POST':
         technique = request.form['name']
-	url = request.form['url']
+        url = request.form['url']
+
         
  
         if form.validate():
             #flash('Hello ' + name)
             print 'Hello ' + technique
-            name = download_image(url)
-            draw_face_boundary(name)
-            message_response = process_image(name)
-            #flash(message_response)
-            #return show_result(name,message_response) works
 
-    	    #result(name,message_response)
-            return render_template('results.html', img_name=name,message_response=message_response)
+            if technique == "technique1":
+                name = download_image(url)
+                draw_face_boundary(name)
+                message_response = process_image(name)
+                #flash(message_response)
+                #return show_result(name,message_response) works
+
+    	        #result(name,message_response)
+                return render_template('results.html', img_name=name,message_response=message_response)
             
         else:
             flash('All the form fields are required. ')
